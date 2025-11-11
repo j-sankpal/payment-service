@@ -143,6 +143,17 @@ public class PaymentService {
         throw new PaymentException("Payment not found: " + paymentId, "PAYMENT_NOT_FOUND", 404);
     }
 
+    /**
+     * Gets basic payment statistics (placeholder for future implementation).
+     *
+     * @return a simple statistics message
+     */
+    public String getPaymentStatistics() {
+        log.info("Retrieving payment statistics");
+        // TODO: Implement actual statistics calculation
+        return "Payment Statistics: Total payments processed today: 0";
+    }
+
     private String createPaymentEventJson(String paymentId, PaymentRequest request, String status) {
         return String.format(
             "{\"paymentId\":\"%s\",\"userId\":\"%s\",\"amount\":%.2f,\"currency\":\"%s\",\"status\":\"%s\",\"timestamp\":%d}",
