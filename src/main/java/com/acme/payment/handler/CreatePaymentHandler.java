@@ -1,14 +1,17 @@
 package com.acme.payment.handler;
 
 import com.acme.payment.config.PaymentComponent;
+import com.acme.payment.model.PaymentException;
 import com.acme.payment.model.PaymentRequest;
 import com.acme.payment.model.PaymentResponse;
 import com.acme.payment.service.PaymentService;
+import com.acme.payment.util.PaymentValidator;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyRequestEvent;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyResponseEvent;
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,27 +38,61 @@ public class CreatePaymentHandler implements RequestHandler<APIGatewayProxyReque
     public APIGatewayProxyResponseEvent handleRequest(
             APIGatewayProxyRequestEvent event, Context context) {
 
-        log.info("CreatePaymentHandler invoked");
+        log.debug("CreatePaymentHandler invoked with request ID: {}",
+                context != null ? context.getAwsRequestId() : "unknown");
 
         try {
-            // Parse request
-            String body = event.getBody();
-            PaymentRequest request = gson.fromJson(body, PaymentRequest.class);
+            // Validate input
+            if (event == null) {
+                log.warn("Received null event");
+                return errorResponse(400, "Invalid request: event is null");
+            }
 
-            // RISK: No validation on request fields
-            if (request.getUserId() == null || request.getAmount() == null) {
-                return errorResponse(400, "Missing required fields");
+            String body = event.getBody();
+            if (body == null || body.trim().isEmpty()) {
+                log.warn("Received empty request body");
+                return errorResponse(400, "Request body is required");
+            }
+
+            // Parse JSON request
+            PaymentRequest request;
+            try {
+                request = gson.fromJson(body, PaymentRequest.class);
+                if (request != null) {
+                    log.trace("Parsed payment request for user: {}", request.getUserId());
+                }
+            } catch (JsonSyntaxException e) {
+                log.warn("Invalid JSON in request body: {}", e.getMessage());
+                return errorResponse(400, "Invalid JSON format in request body");
+            }
+
+            // Guard against null request after parsing
+            if (request == null) {
+                log.warn("JSON parsing resulted in null request object");
+                return errorResponse(400, "Invalid request body");
+            }
+
+            // Validate payment request
+            try {
+                PaymentValidator.validatePaymentRequest(request);
+            } catch (PaymentException e) {
+                log.warn("Payment validation failed: {}", e.getMessage());
+                return errorResponse(e.getHttpStatus(), e.getMessage());
             }
 
             // Process payment
             PaymentResponse response = paymentService.createPayment(request);
+            log.debug("Successfully created payment: {}", response.getPaymentId());
 
             // Return response
             return successResponse(201, response);
 
+        } catch (PaymentException e) {
+            log.error("Payment business logic error: {}", e.getMessage(), e);
+            return errorResponse(e.getHttpStatus(), e.getMessage());
         } catch (Exception e) {
-            log.error("Error processing payment", e);
-            return errorResponse(500, e.getMessage());
+            log.error("Unexpected error processing payment request", e);
+            return errorResponse(500, "Internal server error");
         }
     }
 

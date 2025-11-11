@@ -1,6 +1,7 @@
 package com.acme.payment.handler;
 
 import com.acme.payment.config.PaymentComponent;
+import com.acme.payment.model.PaymentException;
 import com.acme.payment.model.PaymentResponse;
 import com.acme.payment.service.PaymentService;
 import com.amazonaws.services.lambda.runtime.Context;
@@ -13,6 +14,10 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
+/**
+ * AWS Lambda handler for retrieving payments.
+ * Handles API Gateway requests to fetch payment details by ID.
+ */
 public class GetPaymentHandler implements RequestHandler<APIGatewayProxyRequestEvent, APIGatewayProxyResponseEvent> {
 
     private static final Logger log = LoggerFactory.getLogger(GetPaymentHandler.class);
@@ -29,28 +34,41 @@ public class GetPaymentHandler implements RequestHandler<APIGatewayProxyRequestE
     public APIGatewayProxyResponseEvent handleRequest(
             APIGatewayProxyRequestEvent event, Context context) {
 
-        log.info("GetPaymentHandler invoked");
+        log.debug("GetPaymentHandler invoked with request ID: {}",
+                context != null ? context.getAwsRequestId() : "unknown");
 
         try {
+            // Validate input
+            if (event == null) {
+                log.warn("Received null event");
+                return errorResponse(400, "Invalid request: event is null");
+            }
+
+            Map<String, String> pathParameters = event.getPathParameters();
+            if (pathParameters == null) {
+                log.warn("No path parameters provided");
+                return errorResponse(400, "Missing path parameters");
+            }
+
             // Extract paymentId from path
-            String paymentId = event.getPathParameters().get("paymentId");
-
-            if (paymentId == null || paymentId.isEmpty()) {
-                return errorResponse(400, "Missing paymentId");
+            String paymentId = pathParameters.get("paymentId");
+            if (paymentId == null || paymentId.trim().isEmpty()) {
+                log.warn("Missing paymentId in path parameters");
+                return errorResponse(400, "Missing paymentId parameter");
             }
 
-            // Get payment
+            // Get payment (this will throw PaymentException if not found)
             PaymentResponse response = paymentService.getPayment(paymentId);
-
-            if (response.getPaymentId() == null) {
-                return errorResponse(404, "Payment not found");
-            }
+            log.debug("Successfully retrieved payment: {}", paymentId);
 
             return successResponse(200, response);
 
+        } catch (PaymentException e) {
+            log.warn("Payment retrieval failed: {}", e.getMessage());
+            return errorResponse(e.getHttpStatus(), e.getMessage());
         } catch (Exception e) {
-            log.error("Error fetching payment", e);
-            return errorResponse(500, e.getMessage());
+            log.error("Unexpected error retrieving payment", e);
+            return errorResponse(500, "Internal server error");
         }
     }
 
