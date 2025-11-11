@@ -1,0 +1,30 @@
+# Build outputs
+build/
+.gradle/
+bin/
+
+# IDE files
+.vscode/
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+*.tmp
+*.swp
+*.bak
+
+# Node modules (for infra)
+infra/node_modules/
+
+# LocalStack data
+.localstack/
