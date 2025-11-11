@@ -1,5 +1,6 @@
 package com.acme.payment.service;
 
+import com.acme.payment.model.PaymentException;
 import com.acme.payment.model.PaymentRequest;
 import com.acme.payment.model.PaymentResponse;
 import org.slf4j.Logger;
@@ -128,24 +129,27 @@ public class PaymentService {
      *
      * @param paymentId the unique identifier of the payment
      * @return the payment response
+     * @throws PaymentException if paymentId is invalid or payment not found
      */
     public PaymentResponse getPayment(String paymentId) {
         log.info("Fetching payment: {}", paymentId);
 
+        // Validate payment ID
+        try {
+            com.acme.payment.util.PaymentValidator.validatePaymentId(paymentId);
+        } catch (PaymentException e) {
+            log.warn("Invalid payment ID: {}", paymentId);
+            throw e;
+        }
+
         try {
             // TODO: Query DynamoDB for paymentId
-            return PaymentResponse.builder()
-                    .paymentId(paymentId)
-                    .status("PENDING")
-                    .timestamp(System.currentTimeMillis())
-                    .build();
+            // For now, simulate not found
+            throw new RuntimeException("Payment not found in database");
+
         } catch (Exception e) {
             log.error("Failed to fetch payment: {}", paymentId, e);
-            return PaymentResponse.builder()
-                    .paymentId(paymentId)
-                    .status("FAILED")
-                    .error(e.getMessage())
-                    .build();
+            throw new PaymentException("Payment not found: " + paymentId, "PAYMENT_NOT_FOUND", 404);
         }
     }
 
