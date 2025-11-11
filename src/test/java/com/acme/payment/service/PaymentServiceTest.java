@@ -13,46 +13,72 @@ class PaymentServiceTest {
 
     @Test
     public void testPaymentRequestCreation() {
+        // Given: Valid payment request parameters
+        String userId = "user123";
+        double amount = 150.0;
+        String currency = "EUR";
+        String idempotencyKey = "idemp123";
+
+        // When: PaymentRequest is built
         PaymentRequest request = PaymentRequest.builder()
-                .userId("user123")
-                .amount(150.0)
-                .currency("EUR")
-                .idempotencyKey("idemp123")
+                .userId(userId)
+                .amount(amount)
+                .currency(currency)
+                .idempotencyKey(idempotencyKey)
                 .build();
 
-        assertEquals("user123", request.getUserId());
-        assertEquals(150.0, request.getAmount());
-        assertEquals("EUR", request.getCurrency());
-        assertEquals("idemp123", request.getIdempotencyKey());
+        // Then: All fields should be set correctly
+        assertEquals(userId, request.getUserId());
+        assertEquals(amount, request.getAmount());
+        assertEquals(currency, request.getCurrency());
+        assertEquals(idempotencyKey, request.getIdempotencyKey());
     }
 
     @Test
     public void testPaymentResponseCreation() {
+        // Given: Valid payment response parameters
+        String paymentId = "pay123";
+        String status = "SUCCESS";
+        double amount = 200.0;
+        String currency = "USD";
+        long timestamp = 123456789L;
+
+        // When: PaymentResponse is built
         PaymentResponse response = PaymentResponse.builder()
-                .paymentId("pay123")
-                .status("SUCCESS")
-                .amount(200.0)
-                .currency("USD")
-                .timestamp(123456789L)
+                .paymentId(paymentId)
+                .status(status)
+                .amount(amount)
+                .currency(currency)
+                .timestamp(timestamp)
                 .build();
 
-        assertEquals("pay123", response.getPaymentId());
-        assertEquals("SUCCESS", response.getStatus());
-        assertEquals(200.0, response.getAmount());
-        assertEquals("USD", response.getCurrency());
-        assertEquals(123456789L, response.getTimestamp());
+        // Then: All fields should be set correctly
+        assertEquals(paymentId, response.getPaymentId());
+        assertEquals(status, response.getStatus());
+        assertEquals(amount, response.getAmount());
+        assertEquals(currency, response.getCurrency());
+        assertEquals(timestamp, response.getTimestamp());
     }
 
     @Test
     public void testPaymentResponseWithError() {
+        // Given: Payment response parameters including error
+        String paymentId = "pay123";
+        String status = "FAILED";
+        String errorMessage = "Payment failed";
+
+        // When: PaymentResponse with error is built
         PaymentResponse response = PaymentResponse.builder()
-                .paymentId("pay123")
-                .status("FAILED")
-                .error("Payment failed")
+                .paymentId(paymentId)
+                .status(status)
+                .error(errorMessage)
                 .build();
 
-        assertEquals("pay123", response.getPaymentId());
-        assertEquals("FAILED", response.getStatus());
-        assertEquals("Payment failed", response.getError());
+        // Then: Error fields should be set correctly
+        assertEquals(paymentId, response.getPaymentId());
+        assertEquals(status, response.getStatus());
+        assertEquals(errorMessage, response.getError());
+        assertNull(response.getCurrency()); // Should be null when not set
+        assertEquals(0L, response.getTimestamp()); // Should be default when not set
     }
 }
