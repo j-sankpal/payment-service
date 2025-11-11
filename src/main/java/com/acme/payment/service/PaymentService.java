@@ -132,25 +132,15 @@ public class PaymentService {
      * @throws PaymentException if paymentId is invalid or payment not found
      */
     public PaymentResponse getPayment(String paymentId) {
-        log.info("Fetching payment: {}", paymentId);
+        log.debug("Fetching payment: {}", paymentId);
 
         // Validate payment ID
-        try {
-            com.acme.payment.util.PaymentValidator.validatePaymentId(paymentId);
-        } catch (PaymentException e) {
-            log.warn("Invalid payment ID: {}", paymentId);
-            throw e;
-        }
+        com.acme.payment.util.PaymentValidator.validatePaymentId(paymentId);
 
-        try {
-            // TODO: Query DynamoDB for paymentId
-            // For now, simulate not found
-            throw new RuntimeException("Payment not found in database");
-
-        } catch (Exception e) {
-            log.error("Failed to fetch payment: {}", paymentId, e);
-            throw new PaymentException("Payment not found: " + paymentId, "PAYMENT_NOT_FOUND", 404);
-        }
+        // TODO: Query DynamoDB for paymentId
+        // For now, simulate not found by throwing PaymentException directly
+        log.warn("Payment not found in database: {}", paymentId);
+        throw new PaymentException("Payment not found: " + paymentId, "PAYMENT_NOT_FOUND", 404);
     }
 
     private String createPaymentEventJson(String paymentId, PaymentRequest request, String status) {

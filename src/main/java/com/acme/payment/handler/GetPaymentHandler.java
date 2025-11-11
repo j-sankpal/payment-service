@@ -34,7 +34,7 @@ public class GetPaymentHandler implements RequestHandler<APIGatewayProxyRequestE
     public APIGatewayProxyResponseEvent handleRequest(
             APIGatewayProxyRequestEvent event, Context context) {
 
-        log.info("GetPaymentHandler invoked with request ID: {}",
+        log.debug("GetPaymentHandler invoked with request ID: {}",
                 context != null ? context.getAwsRequestId() : "unknown");
 
         try {
@@ -59,7 +59,7 @@ public class GetPaymentHandler implements RequestHandler<APIGatewayProxyRequestE
 
             // Get payment (this will throw PaymentException if not found)
             PaymentResponse response = paymentService.getPayment(paymentId);
-            log.info("Successfully retrieved payment: {}", paymentId);
+            log.debug("Successfully retrieved payment: {}", paymentId);
 
             return successResponse(200, response);
 

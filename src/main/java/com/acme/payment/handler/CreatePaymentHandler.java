@@ -38,7 +38,7 @@ public class CreatePaymentHandler implements RequestHandler<APIGatewayProxyReque
     public APIGatewayProxyResponseEvent handleRequest(
             APIGatewayProxyRequestEvent event, Context context) {
 
-        log.info("CreatePaymentHandler invoked with request ID: {}",
+        log.debug("CreatePaymentHandler invoked with request ID: {}",
                 context != null ? context.getAwsRequestId() : "unknown");
 
         try {
@@ -58,10 +58,18 @@ public class CreatePaymentHandler implements RequestHandler<APIGatewayProxyReque
             PaymentRequest request;
             try {
                 request = gson.fromJson(body, PaymentRequest.class);
-                log.debug("Parsed payment request for user: {}", request.getUserId());
+                if (request != null) {
+                    log.trace("Parsed payment request for user: {}", request.getUserId());
+                }
             } catch (JsonSyntaxException e) {
                 log.warn("Invalid JSON in request body: {}", e.getMessage());
                 return errorResponse(400, "Invalid JSON format in request body");
+            }
+
+            // Guard against null request after parsing
+            if (request == null) {
+                log.warn("JSON parsing resulted in null request object");
+                return errorResponse(400, "Invalid request body");
             }
 
             // Validate payment request
@@ -74,7 +82,7 @@ public class CreatePaymentHandler implements RequestHandler<APIGatewayProxyReque
 
             // Process payment
             PaymentResponse response = paymentService.createPayment(request);
-            log.info("Successfully created payment: {}", response.getPaymentId());
+            log.debug("Successfully created payment: {}", response.getPaymentId());
 
             // Return response
             return successResponse(201, response);

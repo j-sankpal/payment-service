@@ -31,12 +31,16 @@ public class PaymentValidator {
             throw new PaymentException("Amount cannot exceed $10,000", "VALIDATION_ERROR", 400);
         }
 
-        if (request.getCurrency() == null || request.getCurrency().trim().isEmpty()) {
+        String currency = request.getCurrency();
+        if (currency == null || currency.trim().isEmpty()) {
             throw new PaymentException("Currency is required", "VALIDATION_ERROR", 400);
         }
 
+        // Normalize currency: trim and uppercase
+        currency = currency.trim().toUpperCase();
+
         // Validate currency format (should be 3 uppercase letters)
-        if (!request.getCurrency().matches("^[A-Z]{3}$")) {
+        if (!currency.matches("^[A-Z]{3}$")) {
             throw new PaymentException("Currency must be a valid 3-letter code (e.g., USD, EUR)",
                                      "VALIDATION_ERROR", 400);
         }
@@ -57,8 +61,8 @@ public class PaymentValidator {
             throw new PaymentException("Payment ID is required", "VALIDATION_ERROR", 400);
         }
 
-        // UUID format validation
-        if (!paymentId.matches("^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$")) {
+        // UUID format validation (allows both uppercase and lowercase hex)
+        if (!paymentId.matches("^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$")) {
             throw new PaymentException("Invalid payment ID format", "VALIDATION_ERROR", 400);
         }
     }
