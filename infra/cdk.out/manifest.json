@@ -1,0 +1,162 @@
+{
+  "version": "36.0.0",
+  "artifacts": {
+    "PaymentService-Alpha.assets": {
+      "type": "cdk:asset-manifest",
+      "properties": {
+        "file": "PaymentService-Alpha.assets.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+      }
+    },
+    "PaymentService-Alpha": {
+      "type": "aws:cloudformation:stack",
+      "environment": "aws://unknown-account/us-east-1",
+      "properties": {
+        "templateFile": "PaymentService-Alpha.template.json",
+        "terminationProtection": false,
+        "tags": {
+          "CreatedAt": "2025-11-12T01:12:33.772Z",
+          "Environment": "alpha",
+          "ManagedBy": "CDK",
+          "Project": "PaymentService"
+        },
+        "validateOnSynth": false,
+        "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-us-east-1",
+        "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-us-east-1",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1/b0d469fcc39e5a5570187de9492c6b6158efd77d0ad6d38e02fde6f40ca427d3.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
+        "additionalDependencies": [
+          "PaymentService-Alpha.assets"
+        ],
+        "lookupRole": {
+          "arn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-lookup-role-${AWS::AccountId}-us-east-1",
+          "requiresBootstrapStackVersion": 8,
+          "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+        }
+      },
+      "dependencies": [
+        "PaymentService-Alpha.assets"
+      ],
+      "metadata": {
+        "/PaymentService-Alpha": [
+          {
+            "type": "aws:cdk:stack-tags",
+            "data": [
+              {
+                "Key": "CreatedAt",
+                "Value": "2025-11-12T01:12:33.772Z"
+              },
+              {
+                "Key": "Environment",
+                "Value": "alpha"
+              },
+              {
+                "Key": "ManagedBy",
+                "Value": "CDK"
+              },
+              {
+                "Key": "Project",
+                "Value": "PaymentService"
+              }
+            ]
+          }
+        ],
+        "/PaymentService-Alpha/Storage/DynamoDbTable/DynamodbTable": [
+          {
+            "type": "aws:cdk:hasPhysicalName",
+            "data": {
+              "Ref": "StorageDynamoDbTableDynamodbTable2CABABC0"
+            }
+          }
+        ],
+        "/PaymentService-Alpha/Storage/DynamoDbTable/DynamodbTable/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "StorageDynamoDbTableDynamodbTable2CABABC0"
+          }
+        ],
+        "/PaymentService-Alpha/Storage/S3Bucket/S3Bucket/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "StorageS3Bucket7470D606"
+          }
+        ],
+        "/PaymentService-Alpha/Storage/S3Bucket/S3Bucket/Policy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "StorageS3BucketPolicy7F9108DC"
+          }
+        ],
+        "/PaymentService-Alpha/Storage/S3Bucket/S3Bucket/AutoDeleteObjectsCustomResource/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "StorageS3BucketAutoDeleteObjectsCustomResourceF438F4AE"
+          }
+        ],
+        "/PaymentService-Alpha/Custom::S3AutoDeleteObjectsCustomResourceProvider/Role": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092"
+          }
+        ],
+        "/PaymentService-Alpha/Custom::S3AutoDeleteObjectsCustomResourceProvider/Handler": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CustomS3AutoDeleteObjectsCustomResourceProviderHandler9D90184F"
+          }
+        ],
+        "/PaymentService-Alpha/TableName": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "TableName"
+          }
+        ],
+        "/PaymentService-Alpha/BucketName": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "BucketName"
+          }
+        ],
+        "/PaymentService-Alpha/TableArn": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "TableArn"
+          }
+        ],
+        "/PaymentService-Alpha/BucketArn": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "BucketArn"
+          }
+        ],
+        "/PaymentService-Alpha/CDKMetadata/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CDKMetadata"
+          }
+        ],
+        "/PaymentService-Alpha/BootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "BootstrapVersion"
+          }
+        ],
+        "/PaymentService-Alpha/CheckBootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CheckBootstrapVersion"
+          }
+        ]
+      },
+      "displayName": "PaymentService-Alpha"
+    },
+    "Tree": {
+      "type": "cdk:tree",
+      "properties": {
+        "file": "tree.json"
+      }
+    }
+  }
+}
