@@ -26,5 +26,11 @@ logs/
 # Node modules (for infra)
 infra/node_modules/
 
+# CDK generated files
+infra/generated/
+infra/**/*.js
+infra/**/*.d.ts
+infra/cdk.out/
+
 # LocalStack data
 .localstack/

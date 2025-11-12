@@ -5,7 +5,8 @@
   "private": true,
   "main": "app/payment-service.ts",
   "scripts": {
-    "build": "tsc",
+    "clean": "rm -rf generated/",
+    "build": "npm run clean && tsc",
     "watch": "tsc -w",
     "test": "jest",
     "test:watch": "jest --watch",
